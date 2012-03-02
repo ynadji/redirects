@@ -1,0 +1,9 @@
+* <META http-equiv ... doesn't automatically redirect w/ client/get
+* Options to dump:
+  * ALL domains/IPs in all returned documents
+  * All redirected domains
+  * All redirected paths/GET args
+  * Option for additional HTML parsing function to build features
+* Make this run as a service that you can query with cURL or something. This will be nice
+for manual investigation
+* When sources use this to boost signal, label the "level" away from the beginning it is.
