@@ -7,3 +7,5 @@
 * Make this run as a service that you can query with cURL or something. This will be nice
 for manual investigation
 * When sources use this to boost signal, label the "level" away from the beginning it is.
+* Would this catch FFSNs? Can you proxy without revealing the server info to the client?
+  * This probably won't catch mothership info unless the attackers are retarded.
