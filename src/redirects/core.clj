@@ -50,13 +50,22 @@
                                 (html/select [:a]))))]
     urls))
 
+(defn- parse-meta-content
+  "Parse <meta> tag content attribute. Special cases galore!"
+  [content]
+  (let [tmp (second (split content #"="))]
+    (cond
+     (and (.startsWith tmp "'") (.endsWith tmp "'"))
+     (subs tmp 1 (dec (count tmp)))
+     :else tmp)))
+
 (defn- parse-meta-redirect
   "Given HTML source as string, parse and return the URL of a <meta> redirect
   or nil if it doesn't exist."
   [body]
   (try (valid-url?
-        (second (split (-> body resourcify
-                           (html/select [:head :meta]) first :attrs :content) #"=")))
+        (parse-meta-content (-> body resourcify
+                                (html/select [:meta]) first :attrs :content)))
        (catch java.lang.NullPointerException e nil)))
 
 (defn http-redirects
