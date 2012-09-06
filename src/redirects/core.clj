@@ -73,9 +73,10 @@
   "Given HTML source as a string, parse and return the URLs in <iframe>'s
   if any exist."
   [body]
-  (distinct (map #(:src (:attrs %))
-                 (-> body resourcify
-                     (html/select [:iframe])))))
+  (filter #(not (nil? %))
+          (distinct (map #(:src (:attrs %))
+                         (-> body resourcify
+                             (html/select [:iframe]))))))
 
 (defn http-redirects
   "Handle all HTTP redirects."
