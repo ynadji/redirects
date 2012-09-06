@@ -65,8 +65,17 @@
   [body]
   (try (valid-url?
         (parse-meta-content (-> body resourcify
-                                (html/select [:meta]) first :attrs :content)))
+                                (html/select [:meta])
+                                first :attrs :content)))
        (catch java.lang.NullPointerException e nil)))
+
+(defn- parse-iframe-src
+  "Given HTML source as a string, parse and return the URLs in <iframe>'s
+  if any exist."
+  [body]
+  (distinct (map #(:src (:attrs %))
+                 (-> body resourcify
+                     (html/select [:iframe])))))
 
 (defn http-redirects
   "Handle all HTTP redirects."
@@ -75,10 +84,11 @@
         standard-redirects (:trace-redirects http-reply)
         meta-redirect (if (= 1 (count standard-redirects))
                         (-> http-reply :body parse-meta-redirect)
-                        (-> (last standard-redirects) client/get :body parse-meta-redirect))]
-    (if meta-redirect
-      (conj standard-redirects meta-redirect)
-      standard-redirects)))
+                        (-> (last standard-redirects) client/get :body parse-meta-redirect))
+        iframes (-> http-reply :body parse-iframe-src)]
+    (concat iframes (if meta-redirect
+       (conj standard-redirects meta-redirect)
+       standard-redirects))))
 
 (defn unredirect
   [url]
