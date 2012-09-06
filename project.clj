@@ -4,4 +4,5 @@
                  [clj-http "0.3.2"]
                  [server-socket "1.0.0"]
                  [enlive "1.0.0"]]
+  :plugins [[lein-swank "1.4.4"]]
   :main redirects.server)
