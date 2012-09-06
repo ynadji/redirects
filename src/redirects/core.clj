@@ -80,15 +80,16 @@
 
 (defn http-redirects
   "Handle all HTTP redirects."
-  [url]
+  [url & {:keys [standard? meta? iframe? all?] :or
+          {standard? true meta? true iframe? true all? false}}]
   (let [http-reply (client/get url)
         standard-redirects (:trace-redirects http-reply)]
-    {:standard-redirects standard-redirects
-     :meta-redirect (if (= 1 (count standard-redirects))
-                      (-> http-reply :body parse-meta-redirect)
-                      (-> (last standard-redirects) client/get :body parse-meta-redirect))
-     :iframes (-> http-reply :body parse-iframe-src)
-     :all-hrefs (-> http-reply :body parse-body)}))
+    {:standard-redirects (when standard? standard-redirects)
+     :meta-redirect (when meta? (if (= 1 (count standard-redirects))
+                                 (-> http-reply :body parse-meta-redirect)
+                                 (-> (last standard-redirects) client/get :body parse-meta-redirect)))
+     :iframes (when iframe? (-> http-reply :body parse-iframe-src))
+     :all-hrefs (when all? (-> http-reply :body parse-body))}))
 
 (defn unredirect
   [url]
